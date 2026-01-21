@@ -1,5 +1,19 @@
 //Yahtzee - Dungeon Dice Adventure - Final Project
 
+/* Precaution
+*
+* The program used special emoji that can not be displayed on legacy computers.
+* Please change to a newer computer system.
+*/
+
+/* Description
+ * 
+ * The game is based on Yahtzee game with Dungeon elements
+ * Each player can play a maximum of three rounds per turn.
+ * During gameplay, players can interrupt the game and score points immediately.
+ * Players can also choose which dice to roll and which to keep.
+ * The person with the most points wins at the end of the game.
+ */
 import java.util.*;
 public class Yahtzee {
 	
@@ -9,10 +23,10 @@ public class Yahtzee {
 		//Introduction
 		System.out.println("Welcome to 𝕯𝖚𝖓𝖌𝖊𝖔𝖓 𝕯𝖎𝖈𝖊 𝕬𝖉𝖛𝖊𝖓𝖙𝖚𝖗𝖊!");
 		System.out.println("\n------------------\n");
-		System.out.println("Gamemodes include:\n◆ Two-player Duel\n◆ Robot Trial\n");
+		System.out.println("Gamemodes include:\n◆ Two-player Duel\n◆ Overlord Trial\n");
 		
 		//Select Mode
-		System.out.print("(Enter 1 for Two-player Duel, enter 2 for Robot Trial)\nSelect a mode:");
+		System.out.print("(Enter 1 for Two-player Duel, enter 2 for Overlord Trial)\nSelect a mode:");
 		int gamemode;
 		while(true) {
 			gamemode = sc.nextInt();
@@ -25,12 +39,17 @@ public class Yahtzee {
 			System.out.println("\nTwo-player Duel was selected");
 		}
 		else {
-			System.out.println("Robot Trial was seleced");
+			System.out.println("Overlord Trial was seleced");
 		}
 		System.out.println("\n------------------\n");
 		
 		//Rules display
-		RuleDisplay();
+		sc.nextLine(); 
+		System.out.print("Press R to read the rule, or enter any other key to skip:");
+		String rule = sc.nextLine().trim().toUpperCase();
+		if(rule.equals("R")) {
+			RuleDisplay();
+		}
 		
 		//Declarations
 		Random rand = new Random();
@@ -66,10 +85,12 @@ public class Yahtzee {
 			System.out.print("\nHow many rounds you want to play:");
 			rounds = sc.nextInt();
 			if(rounds > 0 && rounds < items.length+1) break;
-			System.out.println("Wrong input, the number should be >0 and ≦" + items.length);
+			System.out.println("Wrong input, please enter a number that >0 and ≦" + items.length);
 		}
 		
-		System.out.println("Adventure begins!\n");
+		wait(300);
+		System.out.println("\nAdventure begins!\n");
+		wait(2000);
 		
 		//Total number of rounds is 2*(items.length - 1)
 		for(int l = 0; l < 2*rounds; l++) {
@@ -90,7 +111,7 @@ public class Yahtzee {
 				}
 				else {
 					if(who == 0)System.out.println("Player round " + (i+1) + "/3");
-					else System.out.println("Robot round " + (i+1) + "/3");
+					else System.out.println("Overlord round " + (i+1) + "/3");
 				}
 				//Display dices
 				DicesDisplay(AvalibleDice, FixedDice, who);
@@ -116,14 +137,14 @@ public class Yahtzee {
 						else {
 							nextStep = botStep(AvalibleDice, FixedDice, who, score);
 							if(nextStep == 0) {
-								System.out.println("The bot choose to finish this round");
+								System.out.println("The Overlord choose to finish this round");
 								nextStep = 4;
 							}
 							else if(nextStep == 1) {
-								System.out.println("The bot choose to continue rolling the dice");
+								System.out.println("The Overlord choose to continue rolling the dice");
 							}
 							else if(nextStep == 2) {
-								System.out.println("The bot choose to move dice");
+								System.out.println("The Overlord choose to move dice");
 							}
 						}
 						
@@ -146,40 +167,88 @@ public class Yahtzee {
 						}
 						System.out.println();
 						//bot only move once
-						if(gamemode == 2 || who == 1) break;
+						if(gamemode == 2 && who == 1) break;
 					}
 					
 					System.out.println("\n------------------\n");
 				}
 				if(nextplayer == 1) break;
+				if(gamemode == 2 && who == 1) wait(2000);
+			}
+			
+			if(!(gamemode == 2 && who == 1) && nextplayer != 1) {
+				System.out.println("Three rounds end. Start settlement for this round");
+				wait(1000);
+				System.out.println("Press Enter to continue");
+				sc.nextLine();
 			}
 			//Three rounds ended
 			if(nextplayer != 1) chartDisplay(gamemode, who, items, score, AvalibleDice, FixedDice, 2);
+			
+			if(gamemode == 2 && who == 1) wait(1000);
 			//change player
 			if(who == 0) who++;
 			else who = 0;
 		}
 		
+		//unused symbols
+		String[] symbols = {"🔪", "⚔️", "🔱", "🏹", "🗡", "💥", "🚕", "🛡️", "🏠", "👑", "⚡️", "🎰", "🔥"};
+		
 		int[] sum = new int[2];
 		//Game settlement
+		System.out.println("\n------------------\n");
+		for(int i = 0; i < 3; i++) {
+			System.out.println("Final Battle");
+			wait(500);
+		}
+		wait(500);
+		
 		for(int i = 0; i < score.length; i++) {
 			for(int j = 0; j < score[0].length; j++) {
 				if(score[i][j] != -1) sum[i] += score[i][j];
 			}
 		}
 		
-		System.out.println(sum[0] + "\n" + sum[1]);
+		System.out.println("┌───────────────────────┬───────────────┬───────────────┐");
+		if(gamemode == 1) System.out.println("|                       |   Player 1    |    Player 2   |");
+		else System.out.println("|                       |    Player     |   Overlord    |");
+		for(int i = 0; i < items.length; i++) {  
+			wait(700);
+			System.out.printf("|%s|", items[i]);
+			for(int j = 0; j < score.length; j++) {
+				if(score[j][i] != -1) System.out.printf("\t%d\t|", score[j][i]);
+				else System.out.printf("\t0\t|");
+			}
+			System.out.println();
+		}
+		wait(700);
+		System.out.printf("|Total Attack Power\t|");
+		wait(1500);
+		System.out.printf("\t%d\t|\t%d\t|\n", sum[0], sum[1]);
+		System.out.println("└───────────────────────┴───────────────┴───────────────┘");
+		
+		wait(1000);
+		System.out.println("\n------------------\n");
 		
 		if(gamemode == 1) {
-			if(sum[0] > sum[1]) System.out.println("Player 1 won. GG");
-			else if(sum[0] < sum[1])System.out.println("Player 2 won. GG");
-			else System.out.println("The game ended in a draw. Well played");
+			if(sum[0] > sum[1]) System.out.println("🎉Player 1 won. GG🎉");
+			else if(sum[0] < sum[1])System.out.println("🎉Player 2 won. GG🎉");
+			else System.out.println("😲The game ended in a draw. Well played👍");
 		}
 		else {
-			if(sum[0] > sum[1]) System.out.println("Player won. GG");
-			else if(sum[0] < sum[1])System.out.println("Robot won. GG");
-			else System.out.println("The game ended in a draw. Well played");
+			if(sum[0] > sum[1]) System.out.println("🎉Player won. GG🎉");
+			else if(sum[0] < sum[1])System.out.println("👹👺👿The Overlord won.");
+			else System.out.println("😲The game ended in a draw. Well played👍");
 		}
+	}
+	
+	public static void wait(int t) {
+		try {
+            Thread.sleep(t);
+        } 
+		catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 	}
 	
 	public static int[] combination(int[] AvalibleDice, int[]FixedDice, int who) {
@@ -235,23 +304,21 @@ public class Yahtzee {
 			PossibleChoice[8] = 25;
 		}
 		//⑩ Accessories
-		//Use set to store unique elements.
-		//To avoid making mistake on: {1,2,2,3,4}, etc.
-		Set<Integer> s = new TreeSet<>();
-		for(int i : AllDice) {
-			s.add(i);
-		}
-		//Convert set to array
-		List<Integer> list = new ArrayList<>(s);
+		boolean[] exist = new boolean[7]; 
 
-		for (int i = 0; i + 3 < list.size(); i++) {
-		    if (list.get(i) == list.get(i+1) - 1 &&
-		        list.get(i+1) == list.get(i+2) - 1 &&
-		        list.get(i+2) == list.get(i+3) - 1) {
+		// Mark the dice that have appeared
+		for (int i = 0; i < AllDice.length; i++) {
+		    exist[AllDice[i]] = true;
+		}
+
+		// Check if 4 dice are consecutive
+		for (int i = 1; i <= 3; i++) { // 1-4, 2-5, 3-6
+		    if (exist[i] && exist[i+1] && exist[i+2] && exist[i+3]) {
 		        PossibleChoice[9] = 30;
 		        break;
 		    }
 		}
+
 		
 		//⑪ Charge Up
 		if(AllDice[0] == AllDice[1]-1 && AllDice[1] == AllDice[2]-1 && AllDice[2] == AllDice[3]-1 && AllDice[3] == AllDice[4]-1) {
@@ -320,11 +387,11 @@ public class Yahtzee {
 		if(gamemode != 2 || who != 1) {
 			System.out.print("Enter the corresponding dice numbers (split with spaces):");
 			String numbers = sc.nextLine().trim();
-			numbers += " ";
 			if(numbers.length() == 0) {
 				System.out.println("No number was entered");
 				return;
 			}
+			numbers += " ";
 			//Find numbers by traversing a string
 			String temp = "";
 			for(int i = 0; i < numbers.length(); i++) {
@@ -404,6 +471,7 @@ public class Yahtzee {
 					temp += numbers.charAt(i);
 				}
 			}
+			wait(1000);
 		}
 		//bot
 		else {
@@ -495,7 +563,7 @@ public class Yahtzee {
 			//Display the chart
 			System.out.println("┌───────────────────────┬───────────────┬───────────────┐");
 			if(gamemode == 1) System.out.println("|                       |   Player 1    |    Player 2   |");
-			else System.out.println("|                       |    Player     |      Bot      |");
+			else System.out.println("|                       |    Player     |   Overlord    |");
 			for(int i = 0; i < items.length; i++) {   
 				System.out.printf("|%s|", items[i]);
 				for(int j = 0; j < score.length; j++) {
@@ -511,7 +579,7 @@ public class Yahtzee {
 			System.out.println("\nYou can choose following combination:");
 			for(int i = 0; i < combo.length; i++) {
 				if(combo[i] != 0 && score[who][i] == -1) {
-					System.out.println("Get " + combo[i] + " from " + items[i]);
+					System.out.println(items[i] + ": Get " + combo[i] + " points");
 					exist = true;
 				}
 			}
@@ -522,7 +590,7 @@ public class Yahtzee {
 			if(round != 2) {
 				while(true) {
 					System.out.print("Are you going to take one spot (Y/N):");
-					String answer = sc.nextLine();
+					String answer = sc.nextLine().toUpperCase();
 					if(answer.equals("Y")){
 						break;
 					}
@@ -539,7 +607,7 @@ public class Yahtzee {
 			do {
 				System.out.print("Enter the corresponding combination number:");
 				comboNum = sc.nextInt();
-				if(comboNum < 1 || comboNum > items.length) {
+				if(comboNum < 1|| comboNum > items.length) {
 					System.out.println("Combination number not exist");
 					continue;
 				}
@@ -551,6 +619,7 @@ public class Yahtzee {
 			} while(true);
 			System.out.println("You get " + combo[comboNum - 1] + " scores from " + comboNum);
 			score[who][comboNum - 1] = combo[comboNum - 1];
+			wait(1500);
 			return 1;
 		}
 		//bot
@@ -574,7 +643,7 @@ public class Yahtzee {
 			for(int i = 0; i < combo.length; i++) {
 				if(score[who][indices[i]] == -1) {
 					score[who][indices[i]] = combo[indices[i]];
-					System.out.println("Robot got " + combo[indices[i]] + " from " + items[indices[i]]);
+					System.out.println("The Overlord got " + combo[indices[i]] + " from " + items[indices[i]]);
 					break;
 				}
 			}
@@ -645,8 +714,10 @@ public class Yahtzee {
 		System.out.println("🛡️ ⑧ Shield Up: \tGet four dice with the same number. Points are the sum all dice (not just the four of a kind).");
 		System.out.println("🏠 ⑨ Full house: \tGet three of a kind and a pair, e.g. 1,1,3,3,3 or 3,3,3,6,6. Scores 25 points.");
 		System.out.println("👑 ⑩ Accessories: \tGet four sequential dice, 1,2,3,4 or 2,3,4,5 or 3,4,5,6. Scores 30 points.");
-		System.out.println("🔥 ⑪ Charge Up: \tGet five sequential dice, 1,2,3,4,5 or 2,3,4,5,6. Scores 40 points.");
+		System.out.println("⚡️ ⑪ Charge Up: \tGet five sequential dice, 1,2,3,4,5 or 2,3,4,5,6. Scores 40 points.");
 		System.out.println("🎰 ⑫ Chance: \t\tYou can put anything into chance. The score is simply the sum of the dice.");
-		System.out.println("🎲 ⑬ YAHTZEE: \t\tFive of a kind. Scores 50 points.");
+		System.out.println("🔥 ⑬ YAHTZEE: \t\tFive of a kind. Scores 50 points.");
+		
+		System.out.println("\nPress Enter to continue");
 	}
 }
